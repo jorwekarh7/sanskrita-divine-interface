@@ -5,7 +5,7 @@
     function useTypewriter(text, { cps = 40, startDelayMs = 400 } = {}) {
     const [out, setOut] = useState("");
 
-    
+    //Health Check
     useEffect(() => {
         let raf = 0;
         let started = false;
