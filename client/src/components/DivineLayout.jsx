@@ -1,14 +1,17 @@
-    import { useEffect, useMemo, useRef, useState } from "react";
+    import { useEffect, useMemo, useRef, useState} from "react";
     import GalaxyBackground from "./GalaxyBackground";
     import ModeToggle from "./ModeToggle";
     
     function useTypewriter(text, { cps = 40, startDelayMs = 400 } = {}) {
     const [out, setOut] = useState("");
+
     
     useEffect(() => {
         let raf = 0;
-        let t0 = 0;
         let started = false;
+        let t0 = 0;
+        let lastChars = -1;
+
         const startAt = performance.now() + startDelayMs;
 
         const step = (now) => {
@@ -24,20 +27,27 @@
 
         const elapsed = now - t0;
         const chars = Math.min(text.length, Math.floor((elapsed / 1000) * cps));
-        setOut(text.slice(0, chars));
+
+        if (chars !== lastChars) {
+            lastChars = chars;
+            setOut(text.slice(0, chars));
+        }
 
         if (chars < text.length) raf = requestAnimationFrame(step);
         };
 
         setOut("");
+        lastChars = -1;
         raf = requestAnimationFrame(step);
+
         return () => cancelAnimationFrame(raf);
     }, [text, cps, startDelayMs]);
 
     return out;
     }
 
-    export default function DivineLayout() {
+    
+    export default function DivineLayout({ mode, onModeChange }) {
     const rootRef = useRef(null);
     const [entered, setEntered] = useState(false);
     const [seekerText, setSeekerText] = useState("");
@@ -122,6 +132,8 @@
         };
     }, []);
 
+    const seekerAwaken = isFocused || isLoading; 
+
     return (
         <div ref={rootRef} className={`scene-root ${entered ? "scene-enter" : "scene-pre"}`}>
         <GalaxyBackground />
@@ -134,14 +146,14 @@
         <div className="cosmic-noise" />
 
         <div className="toggle-corner">
-            <ModeToggle />
+            <ModeToggle mode={mode} onChange={onModeChange} />
         </div>
 
         <div className="aura aura-seeker" />
         <div className="aura aura-divine" />
         <div className="aura aura-divine-core" />
 
-        <div className={`seeker-wrap ${isFocused ? "seeker-awaken" : ""}`}>
+        <div className={`seeker-wrap ${seekerAwaken ? "seeker-awaken" : ""}`}>
         <img
             className="figure seeker-figure parallax-figure"
             src="/seeker.png"
@@ -150,8 +162,8 @@
         />
         </div>
 
-
         <div className={`divine-wrap ${divineText ? "divine-awaken" : ""}`}>
+        <div className="divine-glow" aria-hidden="true" />
         <img
             className="figure divine-figure parallax-figure"
             src="/divine.png"
@@ -159,6 +171,7 @@
             draggable="false"
         />
         </div>
+
 
         <div className="seeker-prompt parallax-ui">
         <textarea
