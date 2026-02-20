@@ -648,6 +648,22 @@ html, body, #root {
 
   transition: transform 0.5s ease, opacity 0.5s ease;
 }
+@keyframes enlightenSpin{
+  from { transform: translateX(-50%) rotate(0deg); }
+  to   { transform: translateX(-50%) rotate(360deg); }
+}
+
+/* While waiting for the model response */
+.enlighten-text.loading{
+  animation: enlightenSpin 0.9s linear infinite;
+}
+
+/* Don't fight hover scaling while spinning */
+.enlighten-text.loading:hover,
+.enlighten-text.loading:active{
+  transform: translateX(-50%);
+}
+
 
 /* subtle hover aura intensify */
 .enlighten-text:hover{
@@ -682,6 +698,24 @@ html, body, #root {
     drop-shadow(0 0 80px rgba(130,180,255,0.5));
 }
 
+/* ===============================
+   Divine Awakening Effect
+================================= */
+
+.divine-awaken{
+  transform: scale(1.05);
+
+  filter:
+    drop-shadow(0 40px 90px rgba(0,0,0,0.70))
+    drop-shadow(0 0 18px rgba(255,240,200,0.95))
+    drop-shadow(0 0 45px rgba(255,220,150,0.85))
+    drop-shadow(0 0 90px rgba(120,220,255,0.75))
+    drop-shadow(0 0 140px rgba(255,230,180,0.6));
+  
+  transition: transform 300ms ease, filter 300ms ease;
+}
+
+
 /* Seeker Awakening Wrapper (safe with parallax) */
 .seeker-wrap{
   position: absolute;
@@ -700,6 +734,32 @@ html, body, #root {
     drop-shadow(0 0 22px rgba(190,230,255,0.70))
     drop-shadow(0 0 50px rgba(150,205,255,0.50));
 }
+
+/* =========================
+   Divine Awakening Wrapper
+========================= */
+.divine-wrap{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform-origin: right top;
+  transition: transform 260ms ease, filter 260ms ease;
+  z-index: 10; /* same layer as figures */
+}
+
+/* When divine response is visible */
+.divine-wrap.divine-awaken{
+  transform: scale(1.04);
+  filter:
+    drop-shadow(0 0 10px rgba(255,255,255,0.90))
+    drop-shadow(0 0 14px rgba(255,255,255,0.95))
+    drop-shadow(0 0 22px rgba(190,230,255,0.70))
+    drop-shadow(0 0 22px rgba(190,230,255,0.70))
+    drop-shadow(0 0 50px rgba(150,205,255,0.50))
+    drop-shadow(0 0 110px rgba(200,230,255,0.35));
+}
+
+
 
 /* =========================
    Past Conversations Drawer

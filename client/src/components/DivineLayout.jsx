@@ -44,6 +44,7 @@
     const [isFocused, setIsFocused] = useState(false);
     const [hasEnlightened, setHasEnlightened] = useState(false);
     const [divineText, setDivineText] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
     const [conversations, setConversations] = useState([]); 
 
@@ -67,6 +68,38 @@
 
 
     const typed = useTypewriter(divineText, { cps: 42, startDelayMs: 150 });
+
+    const handleEnlighten = async () => {
+        const prompt = seekerText.trim();
+        if (!prompt || isLoading) return;
+
+        setHasEnlightened(true);
+        setIsLoading(true);
+
+        // reset so typewriter restarts when response lands
+        setDivineText("");
+
+        try {
+        // TODO: replace with your real model call
+        // simulate latency
+        await new Promise((r) => setTimeout(r, 900));
+
+        const response = divineLine; // TEMP
+
+        // ✅ When response appears: show divine + clear seeker (Enlighten disappears)
+        requestAnimationFrame(() => {
+            setDivineText(response);
+            setSeekerText("");
+            setIsLoading(false);
+        });
+
+        addConversation(prompt, response);
+        } catch (e) {
+        console.error(e);
+        setIsLoading(false);
+        }
+    };
+
 
     useEffect(() => {
         const el = rootRef.current;
@@ -118,14 +151,30 @@
         </div>
 
 
-        <img className="figure divine-figure parallax-figure" src="/divine.png" alt="Divine" draggable="false" />
+        <div className={`divine-wrap ${divineText ? "divine-awaken" : ""}`}>
+        <img
+            className="figure divine-figure parallax-figure"
+            src="/divine.png"
+            alt="Divine"
+            draggable="false"
+        />
+        </div>
 
         <div className="seeker-prompt parallax-ui">
         <textarea
         className="seeker-prompt__input"
         placeholder="Ask the divine..."
         value={seekerText}
-        onChange={(e) => setSeekerText(e.target.value)}
+        onChange={(e) => {
+        const value = e.target.value;
+        setSeekerText(value);
+
+        if (divineText) {
+            setDivineText("");
+            setHasEnlightened(false);
+        }
+        }}
+
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         rows={3}
@@ -141,29 +190,15 @@
         </div>
         )}
 
-
-        {seekerText.trim().length > 0 && (
-        <div
-            className="enlighten-text scene-button"
-            onClick={() => {
-            const prompt = seekerText.trim();
-            if (!prompt) return;
-
-            setHasEnlightened(true);
-
-            const response = divineLine; // TEMP
-
-            setDivineText("");                // reset so typewriter restarts
-            requestAnimationFrame(() => {
-                setDivineText(response);
-            });
-
-            addConversation(prompt, response);
-            }}
-        >
-            Enlighten
-        </div>
-        )}
+        {/* ✅ Show Enlighten while typing OR loading, but hide once divineText exists */}
+            {(seekerText.trim().length > 0 || isLoading) && !divineText && (
+                <div
+                className={`enlighten-text scene-button ${isLoading ? "loading" : ""}`}
+                onClick={handleEnlighten}
+                >
+                Enlighten
+                </div>
+            )}
 
         <button
         className="history-fab"
@@ -188,6 +223,7 @@
             ✕
             </button>
         </div>
+
 
         <div className="history-drawer__list">
             {conversations.length === 0 ? (
