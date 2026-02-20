@@ -1,10 +1,10 @@
     import { useEffect, useMemo, useRef, useState } from "react";
     import GalaxyBackground from "./GalaxyBackground";
     import ModeToggle from "./ModeToggle";
-
+    
     function useTypewriter(text, { cps = 40, startDelayMs = 400 } = {}) {
     const [out, setOut] = useState("");
-
+    
     useEffect(() => {
         let raf = 0;
         let t0 = 0;
@@ -40,6 +40,12 @@
     export default function DivineLayout() {
     const rootRef = useRef(null);
     const [entered, setEntered] = useState(false);
+    const [seekerText, setSeekerText] = useState("");
+    const [isFocused, setIsFocused] = useState(false);
+    const [hasEnlightened, setHasEnlightened] = useState(false);
+    const [divineText, setDivineText] = useState("");
+    const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+    const [conversations, setConversations] = useState([]); 
 
     const divineLine = useMemo(
         () =>
@@ -47,7 +53,20 @@
         []
     );
 
-    const typed = useTypewriter(divineLine, { cps: 42, startDelayMs: 650 });
+    const addConversation = (seeker, divine) => {
+    setConversations((prev) => [
+        {
+        id: crypto.randomUUID(),
+        ts: Date.now(),
+        seeker,
+        divine,
+        },
+        ...prev,
+    ]);
+    };
+
+
+    const typed = useTypewriter(divineText, { cps: 42, startDelayMs: 150 });
 
     useEffect(() => {
         const el = rootRef.current;
@@ -89,22 +108,123 @@
         <div className="aura aura-divine" />
         <div className="aura aura-divine-core" />
 
-        <img className="figure seeker-figure parallax-figure" src="/seeker.png" alt="Seeker" draggable="false" />
+        <div className={`seeker-wrap ${isFocused ? "seeker-awaken" : ""}`}>
+        <img
+            className="figure seeker-figure parallax-figure"
+            src="/seeker.png"
+            alt="Seeker"
+            draggable="false"
+        />
+        </div>
+
+
         <img className="figure divine-figure parallax-figure" src="/divine.png" alt="Divine" draggable="false" />
 
         <div className="seeker-prompt parallax-ui">
-        <input
-            className="seeker-prompt__input"
-            placeholder="Ask the divine..."
+        <textarea
+        className="seeker-prompt__input"
+        placeholder="Ask the divine..."
+        value={seekerText}
+        onChange={(e) => setSeekerText(e.target.value)}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        rows={3}
         />
         </div>
 
+        {hasEnlightened && divineText && (
         <div className="divine-prompt parallax-ui">
-        <input
-            className="seeker-prompt__input"
-            placeholder="Speak as the divine..."
-        />
+            <div className="divine-prompt__text">
+            {typed}
+            <span className={typed.length < divineText.length ? "cursor" : "cursor done"}>▍</span>
+            </div>
         </div>
+        )}
+
+
+        {seekerText.trim().length > 0 && (
+        <div
+            className="enlighten-text scene-button"
+            onClick={() => {
+            const prompt = seekerText.trim();
+            if (!prompt) return;
+
+            setHasEnlightened(true);
+
+            const response = divineLine; // TEMP
+
+            setDivineText("");                // reset so typewriter restarts
+            requestAnimationFrame(() => {
+                setDivineText(response);
+            });
+
+            addConversation(prompt, response);
+            }}
+        >
+            Enlighten
+        </div>
+        )}
+
+        <button
+        className="history-fab"
+        type="button"
+        onClick={() => setIsHistoryOpen(true)}
+        >
+        Past conversations
+        </button>
+
+        <div
+        className={`history-drawer ${isHistoryOpen ? "open" : ""}`}
+        role="dialog"
+        aria-label="Past conversations"
+        >
+        <div className="history-drawer__header">
+            <div className="history-drawer__title">Past conversations</div>
+            <button
+            className="history-drawer__close"
+            type="button"
+            onClick={() => setIsHistoryOpen(false)}
+            >
+            ✕
+            </button>
+        </div>
+
+        <div className="history-drawer__list">
+            {conversations.length === 0 ? (
+            <div className="history-drawer__empty">No conversations yet.</div>
+            ) : (
+            conversations.map((c) => (
+                <button
+                key={c.id}
+                type="button"
+                className="history-item"
+                onClick={() => {
+                    // Load conversation back into UI (recommended)
+                    setSeekerText(c.seeker);
+                    setDivineText(c.divine);
+                    setHasEnlightened(true);
+                    setIsHistoryOpen(false);
+                }}
+                >
+                <div className="history-item__meta">
+                    {new Date(c.ts).toLocaleString()}
+                </div>
+                <div className="history-item__q">
+                    <span>Q:</span> {c.seeker}
+                </div>
+                <div className="history-item__a">
+                    <span>A:</span> {c.divine}
+                </div>
+                </button>
+            ))
+            )}
+        </div>
+        </div>
+
+        {/* optional overlay */}
+        {isHistoryOpen && (
+        <div className="history-overlay" onClick={() => setIsHistoryOpen(false)} />
+        )}
 
         </div>
     );

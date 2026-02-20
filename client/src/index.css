@@ -12,6 +12,9 @@ html, body, #root {
   --my: 0;
 }
 
+@keyframes buttonFade{
+  to { opacity: 1; }
+}
 /* =========================================================
   Background layers
   ========================================================= */
@@ -474,11 +477,11 @@ html, body, #root {
   z-index: 40;
 
   /* Position: tweak if you want */
-  left: clamp(140px, 20vw, 520px);
-  bottom: clamp(150px, 25vh, 250px);
+  left: clamp(140px, 25vw, 520px);
+  bottom: clamp(100px, 15vh, 250px);
 
   /* Size of the brush */
-  width: min(980px, 72vw);
+  width: min(380px, 72vw);
   height: 140px;
 
   /* ✅ IMPORTANT: remove any box background */
@@ -511,13 +514,16 @@ html, body, #root {
   right: clamp(-200px, -100vw, 220px);
   top: clamp(10px, 5vh, 220px);
 
-  width: min(980px, 72vw);
+  width: min(900px, 72vw);
   height: 140px;
 
   background: none !important;
   border: none !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
+
+  right: clamp(320px, 8vw, 220px);
+  max-width: 50vw;
 
   background-image: url("/brush.png");
   background-repeat: no-repeat;
@@ -551,17 +557,16 @@ html, body, #root {
   background: transparent;
   color: rgba(255,255,255,0.92);
 
-  font-size: 18px;
-  font-weight: 650;
-  letter-spacing: 0.2px;
+  /* ✅ WRAP FIXES */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 
-  /* Controls where the text sits on the brush */
-  padding: 26px 70px;
-
-  /* prevents default weird input rendering in some browsers */
-  -webkit-appearance: none;
-  appearance: none;
+  /* ✅ textarea behavior */
+  resize: none;
+  overflow: auto; /* or auto if you want scroll */
 }
+
 
 /* Placeholder */
 .seeker-prompt__input{
@@ -593,4 +598,239 @@ html, body, #root {
   /* IMPORTANT: do NOT override transform here (parallax-ui already handles it) */
 }
 
+.divine-prompt__text{
+  width: 100%;
+  height: 100%;
+  padding: 26px 70px; /* match your seeker padding */
+  color: rgba(255,255,255,0.92);
 
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: 0.2px;
+  line-height: 1.35;
+
+  /* ✅ WRAP FIXES */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  max-width: 100%;
+  /* ✅ allow long answers */
+  overflow: auto;
+}
+
+.divine-prompt__text::-webkit-scrollbar{ width: 0; height: 0; }
+
+/* ======================================
+   Enlighten Aura Text
+====================================== */
+
+.enlighten-text{
+  position: absolute;
+  left: 50%;
+  bottom: 55px;
+  transform: translateX(-50%);
+  z-index: 60;
+
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+
+  color: rgba(235, 245, 255, 0.95);
+  cursor: pointer;
+
+  /* layered glow */
+  text-shadow:
+    0 0 6px rgba(180, 220, 255, 0.8),
+    0 0 14px rgba(150, 210, 255, 0.6),
+    0 0 28px rgba(120, 190, 255, 0.5),
+    0 0 60px rgba(100, 170, 255, 0.4);
+
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+/* subtle hover aura intensify */
+.enlighten-text:hover{
+  transform: translateX(-50%) scale(1.05);
+  text-shadow:
+    0 0 10px rgba(200, 235, 255, 0.95),
+    0 0 20px rgba(160, 220, 255, 0.85),
+    0 0 40px rgba(130, 200, 255, 0.75),
+    0 0 80px rgba(100, 180, 255, 0.6);
+}
+
+/* click feedback */
+.enlighten-text:active{
+  transform: translateX(-50%) scale(0.97);
+}
+
+/* ===============================
+   Seeker Awakening Effect
+================================= */
+
+.seeker-image{
+  transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+.seeker-awaken{
+  transform: scale(1.05);
+
+  filter:
+    drop-shadow(0 0 10px rgba(255,255,255,0.9))
+    drop-shadow(0 0 25px rgba(180,220,255,0.7))
+    drop-shadow(0 0 45px rgba(150,200,255,0.6))
+    drop-shadow(0 0 80px rgba(130,180,255,0.5));
+}
+
+/* Seeker Awakening Wrapper (safe with parallax) */
+.seeker-wrap{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform-origin: left bottom;
+  transition: transform 260ms ease, filter 260ms ease;
+  z-index: 10; /* keep same layer feel as before */
+}
+
+.seeker-wrap.seeker-awaken{
+  transform: scale(1.05);
+  
+  filter:
+    drop-shadow(0 0 10px rgba(255,255,255,0.90))
+    drop-shadow(0 0 22px rgba(190,230,255,0.70))
+    drop-shadow(0 0 50px rgba(150,205,255,0.50));
+}
+
+/* =========================
+   Past Conversations Drawer
+========================= */
+
+.history-fab{
+  position: fixed;
+  right: 18px;
+  bottom: 16px;
+  z-index: 80;
+
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: 999px;
+
+  color: rgba(235,245,255,0.9);
+  background: rgba(10, 12, 16, 0.35);
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.history-fab:hover{
+  transform: translateY(-1px);
+}
+
+.history-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 79;
+  background: rgba(0,0,0,0.25);
+}
+
+.history-drawer{
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: min(360px, 92vw);
+  z-index: 90;
+
+  transform: translateX(110%);
+  transition: transform 0.25s ease;
+
+  background: rgba(10,12,16,0.55);
+  border-left: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(12px);
+  box-shadow: -20px 0 60px rgba(0,0,0,0.45);
+
+  display: flex;
+  flex-direction: column;
+}
+
+.history-drawer.open{
+  transform: translateX(0);
+}
+
+.history-drawer__header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+
+.history-drawer__title{
+  font-weight: 700;
+  color: rgba(235,245,255,0.92);
+  letter-spacing: 0.4px;
+}
+
+.history-drawer__close{
+  background: transparent;
+  border: 0;
+  color: rgba(235,245,255,0.7);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.history-drawer__list{
+  padding: 12px;
+  overflow: auto;
+}
+
+.history-drawer__empty{
+  color: rgba(235,245,255,0.55);
+  font-size: 13px;
+  padding: 10px;
+}
+
+.history-item{
+  width: 100%;
+  text-align: left;
+  padding: 10px;
+  margin-bottom: 10px;
+
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.25);
+  color: rgba(235,245,255,0.88);
+
+  cursor: pointer;
+}
+
+.history-item:hover{
+  border-color: rgba(180,220,255,0.25);
+}
+
+.history-item__meta{
+  font-size: 11px;
+  color: rgba(235,245,255,0.55);
+  margin-bottom: 6px;
+}
+
+.history-item__q,
+.history-item__a{
+  font-size: 12px;
+  line-height: 1.35;
+  margin-bottom: 4px;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;  
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.history-item__q span,
+.history-item__a span{
+  color: rgba(180,220,255,0.85);
+  font-weight: 700;
+}

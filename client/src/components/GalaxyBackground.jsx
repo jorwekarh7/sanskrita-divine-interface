@@ -175,15 +175,39 @@
         window.addEventListener("resize", onResize);
 
         // ===== Scroll zoom =====
+        const canScroll = (el, deltaY) => {
+        if (!el) return false;
+
+        const scrollable = el.scrollHeight > el.clientHeight + 1;
+        if (!scrollable) return false;
+
+        const atTop = el.scrollTop <= 0;
+        const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+
+        // If scrolling up and not already at top -> box can scroll
+        if (deltaY < 0 && !atTop) return true;
+
+        // If scrolling down and not already at bottom -> box can scroll
+        if (deltaY > 0 && !atBottom) return true;
+
+        return false;
+        };
+
         const onWheel = (e) => {
+        // ✅ If wheel happens over either prompt box, NEVER zoom galaxy.
+        // Let the box scroll if it can; otherwise do nothing.
+        const overBox = e.target?.closest?.(".seeker-prompt__input, .divine-prompt__text");
+        if (overBox) return;
+
+        // Otherwise, zoom galaxy
         e.preventDefault();
 
         const s = stateRef.current;
         const delta = Math.max(-140, Math.min(140, e.deltaY));
-
-        // Zoom feels better with a bit more sensitivity at large distances.
         s.targetDistance = THREE.MathUtils.clamp(s.targetDistance + delta * 0.11, 35, 220);
         };
+
+
         window.addEventListener("wheel", onWheel, { passive: false });
 
         // ===== Animate =====
