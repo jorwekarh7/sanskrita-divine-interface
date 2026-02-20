@@ -111,7 +111,8 @@ html, body, #root {
 .scene-pre .figure,
 .scene-pre .speech,
 .scene-pre .toggle-corner,
-.scene-pre .seeker-prompt{
+.scene-pre .seeker-prompt,
+.scene-pre .divine-prompt{
   opacity: 0;
   transform: translateY(12px) scale(0.985);
   filter: blur(2px);
@@ -120,7 +121,8 @@ html, body, #root {
 .scene-enter .figure,
 .scene-enter .speech,
 .scene-enter .toggle-corner,
-.scene-enter .seeker-prompt{
+.scene-enter .seeker-prompt,
+.scene-enter .divine-prompt{
   opacity: 1;
   transform: translateY(0) scale(1);
   filter: blur(0);
@@ -129,6 +131,7 @@ html, body, #root {
     transform 900ms ease,
     filter 900ms ease;
 }
+
 
 /* optional delay to match other UI */
 .scene-enter .seeker-prompt{
@@ -494,6 +497,48 @@ html, body, #root {
   filter: drop-shadow(0 20px 60px rgba(0,0,0,0.65));
   opacity: 0.98;
 }
+
+/* Divine Prompt — same brush style, different position */
+/* =========================================
+    Divine Prompt — same brush, new position
+========================================= */
+
+.divine-prompt{
+  position: absolute;
+  z-index: 40;
+
+  /* ✅ Place on the right side near the divine figure */
+  right: clamp(-200px, -100vw, 220px);
+  top: clamp(10px, 5vh, 220px);
+
+  width: min(980px, 72vw);
+  height: 140px;
+
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+
+  background-image: url("/brush.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+
+  filter: drop-shadow(0 20px 60px rgba(0,0,0,0.65));
+  opacity: 0.98;
+
+  transition: none !important;
+}
+
+.divine-prompt:hover,
+.divine-prompt:active,
+.divine-prompt:focus,
+.divine-prompt:focus-within{
+  filter: drop-shadow(0 20px 60px rgba(0,0,0,0.65)) !important;
+  opacity: 0.98 !important;
+}
+
+
 
 /* Input sits on top of the brush */
 .seeker-prompt__input{
