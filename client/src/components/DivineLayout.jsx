@@ -58,7 +58,8 @@
     const [isLoading, setIsLoading] = useState(false);
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
     const [conversations, setConversations] = useState([]); 
-
+    const HISTORY_KEY = "divine_conversations_v1";
+    
     const divineLine = useMemo(
         () =>
         "Your purpose unfolds through awareness — and through the choices you dare to make while the universe watches.",
@@ -66,15 +67,18 @@
     );
 
     const addConversation = (seeker, divine) => {
-    setConversations((prev) => [
+    setConversations((prev) => {
+        const next = [
         {
-        id: crypto.randomUUID(),
-        ts: Date.now(),
-        seeker,
-        divine,
+            id: crypto.randomUUID(),
+            ts: Date.now(),
+            seeker,
+            divine,
         },
         ...prev,
-    ]);
+        ];
+        return next.slice(0, 25);
+    });
     };
 
 
@@ -149,6 +153,23 @@
         window.removeEventListener("mousemove", onMove);
         };
     }, []);
+
+    useEffect(() => {
+    try {
+        const saved = localStorage.getItem(HISTORY_KEY);
+        if (saved) setConversations(JSON.parse(saved));
+    } catch (e) {
+        console.warn("Failed to load divine history:", e);
+    }
+    }, []);
+
+    useEffect(() => {
+    try {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(conversations));
+    } catch (e) {
+        console.warn("Failed to save divine history:", e);
+    }
+    }, [conversations]);
 
     const seekerAwaken = isFocused || isLoading; 
 
