@@ -91,16 +91,14 @@
         setDivineText("");
 
         try {
-        const resp = await fetch("http://localhost:5000/api/divine", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt }),
+        const resp = await fetch("/api/divine", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
         });
 
-        const data = await resp.json().catch(() => ({}));
-        if (!resp.ok) throw new Error(data.error || "Divine inference failed");
-
-        const response = data.reply;
+        const data = await resp.json();
+        const response = data.reply ?? data.text ?? "";
 
         // ✅ When response appears: show divine + clear seeker
         requestAnimationFrame(() => {

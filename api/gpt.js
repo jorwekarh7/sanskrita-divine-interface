@@ -11,7 +11,7 @@
         }
 
         const reply = await callOpenAI(messages);
-        return res.status(200).json({ reply });
+        return res.status(200).json({ reply, text: reply });
     } catch (err) {
         console.error("GPT_ERROR:", err);
         return res.status(500).json({ error: "GPT request failed" });

@@ -36,13 +36,11 @@
         const resp = await fetch("/api/gpt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            messages: [...messages, userMsg].map(({ role, content }) => ({ role, content })),
-        }),
+        body: JSON.stringify({ messages }),
         });
 
-        const data = await resp.json().catch(() => ({}));
-        if (!resp.ok) throw new Error(data.error || "GPT request failed");
+        const data = await resp.json();
+        const reply = data.reply ?? data.text ?? "No response text";
 
         const assistantMsg = {
         id: crypto.randomUUID(),

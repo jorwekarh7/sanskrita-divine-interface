@@ -17,7 +17,7 @@
     try {
         const { prompt } = req.body;
         const out = await callSanskrita(prompt || "");
-        res.json({ text: out });
+        res.json({ reply: out, text: out }); // ✅ matches frontend (reply) + backward compatible (text)
     } catch (e) {
         console.error("DIVINE ERROR:", e);
         res.status(500).json({ error: String(e.message || e) });
@@ -28,7 +28,7 @@
     try {
         const { messages } = req.body;
         const out = await callOpenAI(messages || []);
-        res.json({ text: out });
+        res.json({ reply: out, text: out }); // ✅ matches frontend
     } catch (e) {
         console.error("GPT ERROR:", e);
         res.status(500).json({ error: String(e.message || e) });
