@@ -97,8 +97,21 @@
         body: JSON.stringify({ prompt }),
         });
 
-        const data = await resp.json();
-        const response = data.reply ?? data.text ?? "";
+        const raw = await resp.text();
+
+        let data = {};
+        try {
+        data = JSON.parse(raw);
+        } catch {
+        data = { error: raw };
+        }
+
+        if (!resp.ok) {
+        throw new Error(data.error || "Divine inference failed");
+        }
+
+        const reply = data.reply ?? data.text ?? "";
+        setDivineText(reply);
 
         // ✅ When response appears: show divine + clear seeker
         requestAnimationFrame(() => {
