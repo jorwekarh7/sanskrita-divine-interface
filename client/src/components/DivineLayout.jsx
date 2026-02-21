@@ -2,7 +2,8 @@
     import GalaxyBackground from "./GalaxyBackground";
     import ModeToggle from "./ModeToggle";
     
-    function useTypewriter(text, { cps = 40, startDelayMs = 400 } = {}) {
+    function useTypewriter(text = "", { cps = 40, startDelayMs = 400 } = {}) {
+    text = text ?? "";
     const [out, setOut] = useState("");
 
     //Health Check
@@ -90,13 +91,18 @@
         setDivineText("");
 
         try {
-        // TODO: replace with your real model call
-        // simulate latency
-        await new Promise((r) => setTimeout(r, 900));
+        const resp = await fetch("http://localhost:5000/api/divine", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt }),
+        });
 
-        const response = divineLine; // TEMP
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) throw new Error(data.error || "Divine inference failed");
 
-        // ✅ When response appears: show divine + clear seeker (Enlighten disappears)
+        const response = data.reply;
+
+        // ✅ When response appears: show divine + clear seeker
         requestAnimationFrame(() => {
             setDivineText(response);
             setSeekerText("");
@@ -108,6 +114,7 @@
         console.error(e);
         setIsLoading(false);
         }
+
     };
 
 

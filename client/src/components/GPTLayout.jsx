@@ -32,16 +32,26 @@
         setMessages((prev) => [...prev, userMsg]);
 
         try {
-        // TODO: Replace with your real GPT endpoint call.
-        await new Promise((r) => setTimeout(r, 450));
+        // Call your Vercel serverless endpoint
+        const resp = await fetch("/api/gpt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            messages: [...messages, userMsg].map(({ role, content }) => ({ role, content })),
+        }),
+        });
+
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) throw new Error(data.error || "GPT request failed");
 
         const assistantMsg = {
-            id: crypto.randomUUID(),
-            role: "assistant",
-            content: `You said: ${text}`,
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: data.reply,
         };
 
         setMessages((prev) => [...prev, assistantMsg]);
+
         } catch (e) {
         console.error(e);
         setMessages((prev) => [
