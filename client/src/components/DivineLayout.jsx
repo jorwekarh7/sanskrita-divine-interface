@@ -59,7 +59,7 @@
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
     const [conversations, setConversations] = useState([]); 
     const HISTORY_KEY = "divine_conversations_v1";
-    
+
     const divineLine = useMemo(
         () =>
         "Your purpose unfolds through awareness — and through the choices you dare to make while the universe watches.",
@@ -85,16 +85,16 @@
     const typed = useTypewriter(divineText, { cps: 42, startDelayMs: 150 });
 
     const handleEnlighten = async () => {
-        const prompt = seekerText.trim();
-        if (!prompt || isLoading) return;
+    const prompt = seekerText.trim();
+    if (!prompt || isLoading) return;
 
-        setHasEnlightened(true);
-        setIsLoading(true);
+    setHasEnlightened(true);
+    setIsLoading(true);
 
-        // reset so typewriter restarts when response lands
-        setDivineText("");
+    // reset so typewriter restarts when response lands
+    setDivineText("");
 
-        try {
+    try {
         const resp = await fetch("/api/divine", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -115,21 +115,19 @@
         }
 
         const reply = data.reply ?? data.text ?? "";
+
+        // ✅ set response + clear input + stop loading
         setDivineText(reply);
+        setSeekerText("");
+        setIsLoading(false);
 
-        // ✅ When response appears: show divine + clear seeker
-        requestAnimationFrame(() => {
-            setDivineText(response);
-            setSeekerText("");
-            setIsLoading(false);
-        });
-
-        addConversation(prompt, response);
-        } catch (e) {
+        // ✅ persist in history
+        addConversation(prompt, reply);
+    } catch (e) {
         console.error(e);
         setIsLoading(false);
-        }
-
+        setDivineText(e?.message || "Divine request failed");
+    }
     };
 
 
