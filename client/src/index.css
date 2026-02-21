@@ -115,6 +115,7 @@ html, body, #root {
 .scene-pre .speech,
 .scene-pre .toggle-corner,
 .scene-pre .seeker-prompt,
+.scene-pre .history-fab,
 .scene-pre .divine-prompt{
   opacity: 0;
   transform: translateY(12px) scale(0.985);
@@ -125,6 +126,7 @@ html, body, #root {
 .scene-enter .speech,
 .scene-enter .toggle-corner,
 .scene-enter .seeker-prompt,
+.scene-enter .history-fab,
 .scene-enter .divine-prompt{
   opacity: 1;
   transform: translateY(0) scale(1);
@@ -160,8 +162,8 @@ html, body, #root {
 /* Toggle styling */
 .mode-toggle2{
   display: inline-flex;
-  gap: 10px;
-  padding: 8px;
+  gap: 5px;
+  padding: 4px;
   border-radius: 999px;
   background: rgba(0,0,0,0.42);
   border: 1px solid rgba(255,255,255,0.12);
@@ -169,17 +171,19 @@ html, body, #root {
 }
 
 .mode-toggle2 button{
-  padding: 10px 14px;
+  padding: 5px 7px;
   border-radius: 999px;
   border: none;
   cursor: pointer;
+  font-size: 0.7rem;
   font-weight: 850;
+  line-height: 1; 
   color: rgba(255,255,255,0.85);
   background: transparent;
 }
 
 .mode-toggle2 button.active{
-  background: linear-gradient(45deg, #ffd36a, #ff8a3d);
+  background: linear-gradient(145deg, #ea88f7, #faf9f8);
   color: #141414;
 }
 
@@ -730,13 +734,17 @@ html, body, #root {
   bottom: 16px;
   z-index: 80;
 
-  font-size: 12px;
   padding: 8px 10px;
   border-radius: 999px;
 
-  color: rgba(235,245,255,0.9);
-  background: rgba(10, 12, 16, 0.35);
-  border: 1px solid rgba(255,255,255,0.12);
+  font-size: 0.7rem;
+  font-weight: 850;
+  line-height: 1;
+
+  color: #141414;
+  background: linear-gradient(145deg, #ea88f7, #faf9f8);
+  
+  border: none;
   backdrop-filter: blur(8px);
 
   cursor: pointer;
@@ -975,8 +983,8 @@ html, body, #root {
   border: none;
   cursor: pointer;
   font-weight: 900;
-  background: linear-gradient(45deg, #ffd36a, #ff8a3d);
   color: #141414;
+  background: linear-gradient(145deg, #ea88f7, #faf9f8);
   box-shadow: 0 12px 35px rgba(255,160,80,0.18);
   transition: transform 160ms ease, filter 160ms ease, opacity 160ms ease;
 }

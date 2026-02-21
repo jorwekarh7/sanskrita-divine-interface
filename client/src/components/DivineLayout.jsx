@@ -50,6 +50,7 @@
     
     export default function DivineLayout({ mode, onModeChange }) {
     const rootRef = useRef(null);
+    const didHydrateHistoryRef = useRef(false);
     const [entered, setEntered] = useState(false);
     const [seekerText, setSeekerText] = useState("");
     const [isFocused, setIsFocused] = useState(false);
@@ -158,10 +159,13 @@
         if (saved) setConversations(JSON.parse(saved));
     } catch (e) {
         console.warn("Failed to load divine history:", e);
+    } finally {
+        didHydrateHistoryRef.current = true; // ✅ allow saving only after initial load attempt
     }
     }, []);
 
     useEffect(() => {
+    if (!didHydrateHistoryRef.current) return; // ✅ prevent overwriting on first mount
     try {
         localStorage.setItem(HISTORY_KEY, JSON.stringify(conversations));
     } catch (e) {
