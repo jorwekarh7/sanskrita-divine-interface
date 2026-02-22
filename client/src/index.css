@@ -770,20 +770,30 @@ html, body, #root {
   width: min(360px, 92vw);
   z-index: 90;
 
-  transform: translateX(110%);
-  transition: transform 0.25s ease;
+  /* ✅ GPU-friendly transform */
+  transform: translate3d(110%, 0, 0);
+  will-change: transform;
+  transition: transform 220ms ease;
 
   background: rgba(10,12,16,0.55);
   border-left: 1px solid rgba(255,255,255,0.12);
-  backdrop-filter: blur(12px);
-  box-shadow: -20px 0 60px rgba(0,0,0,0.45);
+
+  /* ✅ reduce blur cost (huge perf win) */
+  backdrop-filter: blur(8px);
+
+  /* ✅ slightly lighter shadow */
+  box-shadow: -14px 0 44px rgba(0,0,0,0.42);
 
   display: flex;
   flex-direction: column;
+
+  /* ✅ isolate paint/layout to this panel */
+  contain: layout paint;
+  backface-visibility: hidden;
 }
 
 .history-drawer.open{
-  transform: translateX(0);
+  transform: translate3d(0, 0, 0);
 }
 
 .history-drawer__header{
@@ -811,6 +821,10 @@ html, body, #root {
 .history-drawer__list{
   padding: 12px;
   overflow: auto;
+
+  /* ✅ less scroll jank on open */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .history-drawer__empty{
@@ -862,6 +876,34 @@ html, body, #root {
   font-weight: 700;
 }
 
+.history-clear-btn{
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+
+  padding: 5px 10px;
+  font-size: 0.7rem;
+  font-weight: 850;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+
+  color: #141414;
+  background: linear-gradient(145deg, #ea88f7, #faf9f8);
+
+  box-shadow:
+    0 0 18px rgba(255, 248, 220, 0.35),
+    inset 0 0 6px rgba(255, 255, 255, 0.4);
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.history-clear-btn:hover{
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 24px rgba(255, 248, 220, 0.5),
+    inset 0 0 8px rgba(255, 255, 255, 0.5);
+}
 
 /* =========================================================
   GPT Mode UI

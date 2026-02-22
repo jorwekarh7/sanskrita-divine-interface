@@ -60,7 +60,7 @@
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
     const [conversations, setConversations] = useState([]); 
     const HISTORY_KEY = "divine_conversations_v1";
-
+    
     const divineLine = useMemo(
         () =>
         "Your purpose unfolds through awareness — and through the choices you dare to make while the universe watches.",
@@ -80,6 +80,15 @@
         ];
         return next.slice(0, 25);
     });
+    };
+
+    const handleClearConversations = () => {
+    setConversations([]);
+    try {
+        localStorage.removeItem(HISTORY_KEY);
+    } catch (e) {
+        console.warn("Failed to clear history:", e);
+    }
     };
 
 
@@ -276,9 +285,16 @@
             >
             ✕
             </button>
+            <button
+            className="history-clear-btn"
+            onClick={handleClearConversations}
+            >
+            Clear
+            </button>
         </div>
 
 
+        {isHistoryOpen && (
         <div className="history-drawer__list">
             {conversations.length === 0 ? (
             <div className="history-drawer__empty">No conversations yet.</div>
@@ -309,6 +325,7 @@
             ))
             )}
         </div>
+        )}
         </div>
 
         {/* optional overlay */}
