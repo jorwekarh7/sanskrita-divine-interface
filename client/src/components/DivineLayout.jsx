@@ -60,7 +60,14 @@
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
     const [conversations, setConversations] = useState([]); 
     const HISTORY_KEY = "divine_conversations_v1";
-    
+    const [isInfoOpen, setIsInfoOpen] = useState(false);
+
+    const infoText = useMemo(
+    () =>
+        "I am Bhairava! guardian of wisdom and the flame that guides seekers to light.\nThis divine engine understands only transliterated Sanskrit of the ancients.\nIf the language of sages flows within you, step forward and transcend.\nElse go to GPT, transform your prompt, and return to rise! (Click Bhairava to close)",
+    []
+    );
+
     const divineLine = useMemo(
         () =>
         "Your purpose unfolds through awareness — and through the choices you dare to make while the universe watches.",
@@ -197,6 +204,25 @@
 
         <div className="toggle-corner">
             <ModeToggle mode={mode} onChange={onModeChange} />
+        </div>
+
+        {/* Floating Character (top-left, below mode toggle) */}
+        <div className="info-corner">
+        <button
+        type="button"
+        className={`info-float ${isInfoOpen ? "open" : ""}`}
+        onClick={() => setIsInfoOpen(prev => !prev)}
+        aria-label="Open info"
+        >
+        <img src="/bhairava.png" alt="Info character" draggable="false" />
+        </button>
+
+        {isInfoOpen && (
+            <div className="info-plaque" role="dialog" aria-label="Info panel">
+            <div className="info-plaque__text">{infoText}</div>
+
+            </div>
+        )}
         </div>
 
         <div className="aura aura-seeker" />
