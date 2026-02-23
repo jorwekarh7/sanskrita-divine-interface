@@ -28,27 +28,31 @@
         setIsLoading(true);
         setInput("");
 
-        const userMsg = { id: crypto.randomUUID(), role: "user", content: text };
-        setMessages((prev) => [...prev, userMsg]);
+    const userMsg = { id: crypto.randomUUID(), role: "user", content: text };
 
-        try {
-        // Call your Vercel serverless endpoint
-        const resp = await fetch("/api/gpt", {
+    // ✅ build the array NOW (so API gets the latest user prompt)
+    const updatedMessages = [...messages, userMsg];
+
+    // ✅ update UI
+    setMessages(updatedMessages);
+
+    try {
+    const resp = await fetch("/api/gpt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages }),
-        });
+        body: JSON.stringify({ messages: updatedMessages }), // ✅ send updated messages
+    });
 
-        const data = await resp.json();
-        const reply = data.reply ?? data.text ?? "No response text";
+    const data = await resp.json();
+    const reply = data.reply ?? data.text ?? "No response text";
 
-        const assistantMsg = {
+    const assistantMsg = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content: data.reply,
-        };
+        content: reply, // ✅ use the resolved reply
+    };
 
-        setMessages((prev) => [...prev, assistantMsg]);
+    setMessages((prev) => [...prev, assistantMsg]);
 
         } catch (e) {
         console.error(e);
