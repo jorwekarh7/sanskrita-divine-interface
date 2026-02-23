@@ -20,7 +20,7 @@
         },
         body: JSON.stringify({
         // If this model errors for you, switch to "gpt-4o-mini"
-        model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+        model: process.env.OPENAI_MODEL || "gpt-4.1",
         input,
         }),
     });
