@@ -186,7 +186,7 @@
 
     return (
         <div ref={rootRef} className={`scene-root ${entered ? "scene-enter" : "scene-pre"}`}>
-        <GalaxyBackground />
+        <GalaxyBackground mode={mode} />
 
         {/* Mythic light rays (above galaxy, below vignette/UI) */}
         <div className="aura-rays" />

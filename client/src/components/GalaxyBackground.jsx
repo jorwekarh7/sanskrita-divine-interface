@@ -3,7 +3,7 @@
 
     // Big fullscreen mythic galaxy + scroll zoom.
     // Removes the "orange ball" and replaces with a soft glow core.
-    export default function GalaxyBackground() {
+    export default function GalaxyBackground({ mode }) {
     const mountRef = useRef(null);
     const rafRef = useRef(null);
 
@@ -16,6 +16,8 @@
     useEffect(() => {
         const mount = mountRef.current;
         if (!mount) return;
+
+        if (mode !== "divine") return;
 
         // ===== Scene / Camera / Renderer =====
         const scene = new THREE.Scene();
@@ -285,7 +287,7 @@
         renderer.dispose();
         if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
         };
-    }, []);
+    }, [mode]);
 
     return (
         <div
