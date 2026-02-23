@@ -115,6 +115,7 @@ html, body, #root {
 .scene-pre .speech,
 .scene-pre .toggle-corner,
 .scene-pre .seeker-prompt,
+.scene-pre .info-corner,
 .scene-pre .history-fab,
 .scene-pre .divine-prompt{
   opacity: 0;
@@ -126,6 +127,7 @@ html, body, #root {
 .scene-enter .speech,
 .scene-enter .toggle-corner,
 .scene-enter .seeker-prompt,
+.scene-enter .info-corner,
 .scene-enter .history-fab,
 .scene-enter .divine-prompt{
   opacity: 1;
@@ -143,6 +145,9 @@ html, body, #root {
   transition-delay: 140ms;
 }
 
+.scene-enter .info-corner{
+  transition-delay: 100ms;
+}
 
 .scene-enter .speech{
   transition-delay: 120ms;
@@ -687,7 +692,7 @@ html, body, #root {
   color: rgba(255,255,255,0.92);
 
   font-size: 18px;
-  font-weight: 650;
+  font-weight: 500;
   letter-spacing: 0.2px;
   line-height: 1.35;
 

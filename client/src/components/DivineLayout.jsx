@@ -2,11 +2,38 @@
     import GalaxyBackground from "./GalaxyBackground";
     import ModeToggle from "./ModeToggle";
     
+    // ✅ Word-by-word typewriter
+    function useWordTypewriter(text = "", speed = 80) {
+    const [output, setOutput] = useState("");
+
+    useEffect(() => {
+        if (!text) {
+        setOutput("");
+        return;
+        }
+
+        const words = text.split(" ");
+        let index = 0;
+
+        setOutput("");
+
+        const interval = setInterval(() => {
+        index++;
+        setOutput(words.slice(0, index).join(" "));
+        if (index >= words.length) clearInterval(interval);
+        }, speed);
+
+        return () => clearInterval(interval);
+    }, [text, speed]);
+
+    return output;
+    }
+
+    // Existing character typewriter
     function useTypewriter(text = "", { cps = 40, startDelayMs = 400 } = {}) {
     text = text ?? "";
     const [out, setOut] = useState("");
 
-    //Health Check
     useEffect(() => {
         let raf = 0;
         let started = false;
@@ -46,7 +73,6 @@
 
     return out;
     }
-
     
     export default function DivineLayout({ mode, onModeChange }) {
     const rootRef = useRef(null);
@@ -74,6 +100,14 @@
         []
     );
 
+    useEffect(() => {
+    if (!entered) return;
+    const t = setTimeout(() => {
+        setIsInfoOpen(true); // ✅ open the plaque that the UI is actually reading
+    }, 420); // small delay so it appears with the rest
+    return () => clearTimeout(t);
+    }, [entered]);
+    
     const addConversation = (seeker, divine) => {
     setConversations((prev) => {
         const next = [
@@ -190,6 +224,10 @@
     }, [conversations]);
 
     const seekerAwaken = isFocused || isLoading; 
+    const animatedInfoText = useTypewriter(isInfoOpen ? infoText : "", {
+    cps: 15,          // lower = slower typing (adjust)
+    startDelayMs: 200 // small delay feels nice
+    });
 
     return (
         <div ref={rootRef} className={`scene-root ${entered ? "scene-enter" : "scene-pre"}`}>
@@ -219,7 +257,7 @@
 
         {isInfoOpen && (
             <div className="info-plaque" role="dialog" aria-label="Info panel">
-            <div className="info-plaque__text">{infoText}</div>
+            <div className="info-plaque__text">{animatedInfoText}</div>
 
             </div>
         )}
@@ -252,7 +290,7 @@
         <div className="seeker-prompt parallax-ui">
         <textarea
         className="seeker-prompt__input"
-        placeholder="Ask the divine..."
+        placeholder="Divyaṁ pṛccha..."
         value={seekerText}
         onChange={(e) => {
         const value = e.target.value;
@@ -294,7 +332,7 @@
         type="button"
         onClick={() => setIsHistoryOpen(true)}
         >
-        Past conversations
+        Enlightenments
         </button>
 
         <div
